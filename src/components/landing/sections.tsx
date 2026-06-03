@@ -310,12 +310,6 @@ function ProximityCard({
   );
 }
 
-// Helper alias (kept so other sections referencing ReactNode imports compile)
-type _RN = ReactNode;
-      </div>
-    </section>
-  );
-}
 
 /* ---------- PROBLEM ---------- */
 export function Problem() {
