@@ -21,136 +21,189 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 
 /* ---------- HERO ---------- */
 export function Hero() {
-  const words = "Commodity Trade Has a Trust Problem. We Fixed It.".split(" ");
+  const titleWords = "Commodity Trade Has a Trust Problem. We Fixed It.".split(" ");
+
+  const cardsVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.25, delayChildren: 0.4 },
+    },
+  };
+  const cardItemVariants = {
+    hidden: { opacity: 0, x: 60, y: 20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
+    },
+  };
+
   return (
     <section
       id="top"
-      className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-24 overflow-hidden"
+      className="relative min-h-screen flex items-center px-6 pt-32 pb-24 overflow-hidden"
     >
+      {/* Ambient gold glow */}
       <div
         className="absolute inset-0 pointer-events-none opacity-60"
         style={{
           background:
-            "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,169,110,0.08), transparent 60%)",
+            "radial-gradient(ellipse 60% 50% at 30% 20%, rgba(200,169,110,0.10), transparent 60%)",
         }}
       />
-      <div className="relative max-w-5xl mx-auto text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Eyebrow>The Infrastructure for Global Commodity Trade</Eyebrow>
-        </motion.div>
+      {/* Faint grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(to right, var(--border) 1px, transparent 1px)",
+          backgroundSize: "3rem 3rem",
+          maskImage:
+            "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+        }}
+      />
 
-        <h1 className="font-serif text-[40px] leading-[1.05] sm:text-6xl md:text-[72px] text-foreground tracking-tight max-w-4xl mx-auto">
-          {words.map((w, i) => (
-            <motion.span
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.06, duration: 0.6, ease: "easeOut" }}
-              className="inline-block mr-[0.25em]"
-            >
-              {w}
-            </motion.span>
-          ))}
-        </h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.7 }}
-          className="mt-8 text-lg sm:text-xl text-subtext max-w-[560px] mx-auto leading-relaxed"
-        >
-          Commodity AI is the world's first verified blind-broker platform — connecting
-          Indian exporters with Gulf importers through AI-matched deals, protected
-          identities, and escrow-secured payments.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.1, duration: 0.6 }}
-          className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center"
-        >
-          <a
-            href="#waitlist"
-            className="rounded-full bg-accent text-accent-foreground px-6 py-3 text-sm font-medium hover:bg-accent-hover hover:scale-[1.02] transition-all"
+      <div className="relative max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+        {/* LEFT — Text */}
+        <div className="text-left">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            Request Early Access
-          </a>
-          <a
-            href="#how"
-            className="rounded-full border border-border text-foreground px-6 py-3 text-sm hover:border-accent hover:text-accent transition-all"
+            <Eyebrow>The Infrastructure for Global Commodity Trade</Eyebrow>
+          </motion.div>
+
+          <h1 className="font-serif text-[40px] leading-[1.05] sm:text-6xl lg:text-[68px] text-foreground tracking-tight">
+            {titleWords.map((w, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.06, duration: 0.6, ease: "easeOut" }}
+                className="inline-block mr-[0.25em]"
+              >
+                {w}
+              </motion.span>
+            ))}
+          </h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.7 }}
+            className="mt-8 text-lg sm:text-xl text-subtext max-w-[540px] leading-relaxed"
           >
-            See How It Works
-          </a>
-        </motion.div>
+            Commodity AI is the world's first verified blind-broker platform —
+            connecting Indian exporters with Gulf importers through AI-matched
+            deals, protected identities, and escrow-secured payments.
+          </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.3, duration: 0.6 }}
-          className="mt-6 text-sm text-subtext"
-        >
-          Used by exporters moving $500K+ in rice, sugar & agri-commodities across India–UAE corridors
-        </motion.p>
-
-        <FadeUp delay={0.2} className="mt-16">
-          <div className="relative mx-auto w-full max-w-[800px]">
-            <div
-              className="relative rounded-2xl border border-border bg-[#0B0F14] aspect-[800/420] overflow-hidden"
-              style={{ boxShadow: "inset 0 0 80px rgba(200,169,110,0.06)" }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.6 }}
+            className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4"
+          >
+            <a
+              href="#waitlist"
+              className="group inline-flex items-center gap-2 rounded-full bg-accent text-accent-foreground px-6 py-3 text-sm font-medium hover:bg-accent-hover hover:scale-[1.02] transition-all"
             >
-              <motion.div
-                className="absolute inset-0 rounded-2xl"
-                animate={{ opacity: [0.3, 0.7, 0.3] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  boxShadow: "inset 0 0 120px rgba(200,169,110,0.15)",
-                }}
-              />
-              {/* mock UI */}
-              <div className="absolute inset-0 p-6 flex flex-col">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
-                  <div className="ml-4 text-xs text-subtext">commodity.ai / dashboard</div>
-                </div>
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  {[
-                    ["Active Deals", "24"],
-                    ["Escrow Held", "$1.8M"],
-                    ["Avg Trust", "842"],
-                  ].map(([l, v]) => (
-                    <div key={l} className="rounded-lg border border-border p-3 bg-background/40">
-                      <div className="text-[10px] uppercase tracking-wider text-subtext">{l}</div>
-                      <div className="font-serif text-2xl text-accent mt-1">{v}</div>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex-1 rounded-lg border border-border bg-background/30 p-3 space-y-2">
-                  {[
-                    ["IND-RICE-2031", "500T Basmati", "Matched"],
-                    ["IND-SUGR-1188", "300T Refined", "Negotiating"],
-                    ["IND-RICE-2042", "1200T Sona", "Escrow Funded"],
-                  ].map(([id, c, s]) => (
-                    <div key={id} className="flex items-center justify-between text-xs py-1.5 border-b border-border/60 last:border-0">
-                      <span className="text-subtext font-mono">{id}</span>
-                      <span className="text-foreground">{c}</span>
-                      <span className="text-accent">{s}</span>
-                    </div>
-                  ))}
-                </div>
+              Request Early Access
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+            <a
+              href="#how"
+              className="rounded-full border border-border text-foreground px-6 py-3 text-sm hover:border-accent hover:text-accent transition-all text-center"
+            >
+              See How It Works
+            </a>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3, duration: 0.6 }}
+            className="mt-6 text-sm text-subtext max-w-[480px]"
+          >
+            Used by exporters moving $500K+ in rice, sugar & agri-commodities
+            across India–UAE corridors.
+          </motion.p>
+        </div>
+
+        {/* RIGHT — Buyer / Seller Cards */}
+        <motion.div
+          variants={cardsVariants}
+          initial="hidden"
+          animate="visible"
+          className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full"
+        >
+          {/* Back card — Buyer */}
+          <motion.div
+            variants={cardItemVariants}
+            className="absolute top-0 right-0 w-[72%] h-[88%] rounded-2xl overflow-hidden border border-border shadow-2xl"
+            style={{ boxShadow: "0 30px 80px -20px rgba(0,0,0,0.7)" }}
+          >
+            <img
+              src={buyerImg}
+              alt="Gulf importer at Dubai port"
+              width={896}
+              height={1216}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
+              Buyer
+            </div>
+            <div className="absolute bottom-5 left-5 right-5">
+              <div className="font-serif text-2xl text-foreground leading-tight">
+                Gulf Importers
               </div>
-              <div className="absolute inset-0 flex items-end justify-end p-3 text-[10px] text-subtext/60">
-                [Platform UI Preview]
+              <div className="text-xs text-subtext mt-1.5">
+                Verified buyers across UAE, Saudi & Qatar
               </div>
             </div>
-          </div>
-        </FadeUp>
+          </motion.div>
+
+          {/* Front card — Seller */}
+          <motion.div
+            variants={cardItemVariants}
+            className="absolute bottom-0 left-0 w-[68%] h-[78%] rounded-2xl overflow-hidden border border-border shadow-2xl"
+            style={{ boxShadow: "0 40px 100px -20px rgba(0,0,0,0.85)" }}
+          >
+            <img
+              src={sellerImg}
+              alt="Indian exporter rice warehouse"
+              width={896}
+              height={1216}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
+              Seller
+            </div>
+            <div className="absolute bottom-5 left-5 right-5">
+              <div className="font-serif text-2xl text-foreground leading-tight">
+                Indian Exporters
+              </div>
+              <div className="text-xs text-subtext mt-1.5">
+                Rice, sugar & agri-commodities at source
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Floating connector badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1.4, duration: 0.6 }}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-medium tracking-wide shadow-xl"
+          >
+            AI · Matched · Escrowed
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
