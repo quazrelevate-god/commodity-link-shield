@@ -691,57 +691,224 @@ export function Traction() {
   );
 }
 
-/* ---------- CORRIDOR ---------- */
+/* ---------- CORRIDOR / WHERE WE OPERATE ---------- */
 export function Corridor() {
+  // Equirectangular projection helpers
+  const MAP_W = 1200;
+  const MAP_H = 560;
+  const project = (lat: number, lng: number) => ({
+    x: ((lng + 180) / 360) * MAP_W,
+    y: ((90 - lat) / 180) * MAP_H,
+  });
+
+  // Rough continent polygons (lat, lng vertices) — used to mask the dot field into recognizable land shapes.
+  const continents: Array<Array<[number, number]>> = [
+    // North America
+    [[72,-168],[72,-60],[60,-55],[48,-52],[40,-70],[25,-80],[15,-92],[18,-105],[30,-118],[55,-135],[70,-165]],
+    // Central America connector
+    [[18,-92],[8,-78],[10,-72],[18,-88]],
+    // South America
+    [[12,-72],[10,-50],[-5,-35],[-23,-40],[-35,-55],[-55,-70],[-35,-72],[-20,-78],[-5,-80],[5,-78]],
+    // Greenland
+    [[83,-45],[83,-20],[70,-22],[60,-45],[72,-55]],
+    // Europe
+    [[71,-10],[71,40],[60,42],[48,42],[42,28],[38,-10],[44,-10],[50,-5]],
+    // Africa
+    [[36,-12],[36,12],[32,32],[30,35],[12,45],[-2,42],[-18,40],[-35,20],[-35,18],[-12,12],[5,8],[16,-16],[28,-15]],
+    // Middle East / Arabia
+    [[40,28],[40,62],[25,60],[12,45],[20,35]],
+    // Russia / North Asia
+    [[78,40],[78,180],[60,180],[50,140],[45,90],[50,60],[60,42]],
+    // China / East Asia
+    [[50,90],[50,135],[40,140],[22,118],[20,98],[28,85]],
+    // SE Asia / India
+    [[35,68],[35,98],[22,98],[8,80],[8,72],[22,68]],
+    // Indonesia/Malay archipelago (rough)
+    [[7,95],[7,140],[-10,140],[-10,95]],
+    // Australia
+    [[-10,113],[-10,154],[-25,154],[-38,145],[-35,115]],
+    // Japan
+    [[45,140],[45,146],[33,130],[35,138]],
+    // UK / Ireland
+    [[60,-10],[60,2],[50,2],[50,-10]],
+  ];
+
+  const pointInPoly = (lat: number, lng: number, poly: Array<[number, number]>) => {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [yi, xi] = poly[i];
+      const [yj, xj] = poly[j];
+      const intersect =
+        yi > lat !== yj > lat &&
+        lng < ((xj - xi) * (lat - yi)) / (yj - yi + 1e-9) + xi;
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  };
+
+  const isLand = (lat: number, lng: number) =>
+    continents.some((c) => pointInPoly(lat, lng, c));
+
+  // Build dot grid
+  const COLS = 110;
+  const ROWS = 52;
+  const dots = React.useMemo(() => {
+    const out: { x: number; y: number }[] = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const lng = (c / (COLS - 1)) * 360 - 180;
+        const lat = 90 - (r / (ROWS - 1)) * 180;
+        if (lat < -60) continue; // skip antarctica band
+        if (isLand(lat, lng)) {
+          const { x, y } = project(lat, lng);
+          out.push({ x, y });
+        }
+      }
+    }
+    return out;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const cities = [
+    { name: "India", lat: 19.07, lng: 72.87, origin: true },
+    { name: "UAE", lat: 25.27, lng: 55.30 },
+    { name: "Oman", lat: 23.6, lng: 58.5 },
+    { name: "Saudi Arabia", lat: 24.7, lng: 46.7 },
+    { name: "Singapore", lat: 1.35, lng: 103.82 },
+    { name: "Malaysia", lat: 3.14, lng: 101.69 },
+    { name: "Nigeria", lat: 6.5, lng: 3.38 },
+    { name: "Kenya", lat: -1.29, lng: 36.82 },
+    { name: "UK", lat: 51.5, lng: -0.13 },
+  ];
+
+  const origin = project(cities[0].lat, cities[0].lng);
+  const destinations = cities.slice(1).map((c) => ({
+    name: c.name,
+    ...project(c.lat, c.lng),
+  }));
+
+  const corridors = [
+    ["India → UAE", "India → Oman", "India → Saudi Arabia"],
+    ["India → Singapore", "India → Malaysia", "India → Nigeria", "India → Kenya", "India → UK"],
+  ];
+
   return (
-    <section className="px-6 py-32">
-      <div className="max-w-4xl mx-auto text-center">
-        <FadeUp><Eyebrow>Phase 1 Focus</Eyebrow></FadeUp>
-        <FadeUp delay={0.1}>
-          <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight">
-            One Corridor. One Commodity. Total Dominance.
-          </h2>
-        </FadeUp>
+    <section className="px-6 py-32" style={{ backgroundColor: "#080B0F" }}>
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Active Trade Corridors</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-foreground leading-tight" style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}>
+              We Go Where the Volume Is.
+            </h2>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="mt-6 text-[18px] text-subtext max-w-[580px] mx-auto leading-relaxed">
+              Commodity AI is active across the world's highest-volume agri-commodity trade corridors. From Indian export hubs to Gulf trading centres, Southeast Asian ports, African markets, and European commodity exchanges — we operate where serious traders move serious volume.
+            </p>
+          </FadeUp>
+        </div>
+
         <FadeUp delay={0.2}>
-          <p className="mt-8 text-lg text-subtext max-w-2xl mx-auto leading-relaxed">
-            We are not trying to solve all of global trade on day one. We are starting with the single most active, most underserved, and most high-value corridor in South Asian commodity trade — Rice and Sugar, India to UAE. Prove the model. Own the corridor. Then expand.
-          </p>
+          <div className="mt-16 relative w-full overflow-hidden">
+            <svg
+              viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+              className="w-full h-auto"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <linearGradient id="arc-gold" x1="0" x2="1">
+                  <stop offset="0" stopColor="#C8A96E" stopOpacity="0.05" />
+                  <stop offset="0.5" stopColor="#C8A96E" stopOpacity="0.9" />
+                  <stop offset="1" stopColor="#C8A96E" stopOpacity="0.05" />
+                </linearGradient>
+                <radialGradient id="city-glow">
+                  <stop offset="0%" stopColor="#C8A96E" stopOpacity="0.8" />
+                  <stop offset="100%" stopColor="#C8A96E" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              {/* Continent dots */}
+              {dots.map((d, i) => (
+                <circle key={i} cx={d.x} cy={d.y} r={1.6} fill="#1E252D" />
+              ))}
+
+              {/* Trade arcs from India to each destination */}
+              {destinations.map((d, i) => {
+                const mx = (origin.x + d.x) / 2;
+                const my = Math.min(origin.y, d.y) - Math.abs(d.x - origin.x) * 0.25;
+                const path = `M ${origin.x} ${origin.y} Q ${mx} ${my} ${d.x} ${d.y}`;
+                return (
+                  <motion.path
+                    key={d.name}
+                    d={path}
+                    fill="none"
+                    stroke="url(#arc-gold)"
+                    strokeWidth={1.2}
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    whileInView={{ pathLength: 1, opacity: 1 }}
+                    viewport={{ once: true, margin: "-80px" }}
+                    transition={{ duration: 1.4, delay: 0.3 + i * 0.3, ease: "easeOut" }}
+                  />
+                );
+              })}
+
+              {/* Highlighted city dots with pulse */}
+              {[{ ...origin, name: "India", origin: true }, ...destinations].map((c, i) => (
+                <g key={c.name}>
+                  <motion.circle
+                    cx={c.x}
+                    cy={c.y}
+                    r={14}
+                    fill="url(#city-glow)"
+                    initial={{ opacity: 0.2, scale: 0.6 }}
+                    animate={{ opacity: [0.2, 0.55, 0.2], scale: [0.6, 1.4, 0.6] }}
+                    transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
+                    style={{ transformOrigin: `${c.x}px ${c.y}px` }}
+                  />
+                  <circle cx={c.x} cy={c.y} r={3} fill="#C8A96E" />
+                </g>
+              ))}
+            </svg>
+          </div>
         </FadeUp>
 
+        {/* Corridor pills */}
         <FadeUp delay={0.3}>
-          <div className="mt-16 rounded-2xl border border-border bg-surface-alt p-10">
-            <svg viewBox="0 0 600 220" className="w-full h-auto max-w-2xl mx-auto">
-              <defs>
-                <linearGradient id="arc" x1="0" x2="1">
-                  <stop offset="0" stopColor="#C8A96E" stopOpacity="0.2" />
-                  <stop offset="0.5" stopColor="#C8A96E" stopOpacity="1" />
-                  <stop offset="1" stopColor="#C8A96E" stopOpacity="0.2" />
-                </linearGradient>
-              </defs>
-              <motion.path
-                d="M 140 140 Q 300 20 460 140"
-                stroke="url(#arc)"
-                strokeWidth="1.5"
-                fill="none"
-                strokeDasharray="4 4"
-                initial={{ pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 2, ease: "easeOut" }}
-              />
-              <circle cx="140" cy="140" r="6" fill="#C8A96E" />
-              <circle cx="460" cy="140" r="6" fill="#C8A96E" />
-              <text x="140" y="170" textAnchor="middle" fill="#F0EDE6" fontSize="14" fontFamily="DM Sans">India</text>
-              <text x="460" y="170" textAnchor="middle" fill="#F0EDE6" fontSize="14" fontFamily="DM Sans">UAE</text>
-              <text x="300" y="50" textAnchor="middle" fill="#8A9099" fontSize="11" fontFamily="DM Sans" letterSpacing="2">PHASE 1 ACTIVE CORRIDOR</text>
-            </svg>
-            <p className="mt-6 text-xs text-subtext">Expanding to India → Africa, India → Southeast Asia in Phase 2.</p>
+          <div className="mt-12 flex flex-col gap-3 items-center">
+            {corridors.map((row, ri) => (
+              <div key={ri} className="flex flex-wrap justify-center gap-3">
+                {row.map((label) => (
+                  <div
+                    key={label}
+                    className="flex items-center gap-2 rounded-md border border-border bg-background/60 pl-3 pr-4 py-2 text-sm text-foreground"
+                    style={{ borderLeft: "2px solid #C8A96E" }}
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                    </span>
+                    <span className="text-xs uppercase tracking-[0.18em] text-subtext">Live</span>
+                    <span className="ml-1">{label}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
+        </FadeUp>
+
+        <FadeUp delay={0.4}>
+          <p className="mt-10 text-center text-[16px] text-subtext max-w-2xl mx-auto leading-relaxed">
+            New corridors activated on verified trader demand. If your market is not listed — it is already in our pipeline.
+          </p>
         </FadeUp>
       </div>
     </section>
   );
 }
+
+
 
 /* ---------- LOGO STRIP ---------- */
 export function LogoStrip() {
