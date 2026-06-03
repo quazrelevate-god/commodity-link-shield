@@ -24,22 +24,8 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 export function Hero() {
   const titleWords = "Commodity Trade Has a Trust Problem. We Fixed It.".split(" ");
 
-  const cardsVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.25, delayChildren: 0.4 },
-    },
-  };
-  const cardItemVariants = {
-    hidden: { opacity: 0, x: 60, y: 20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  };
+
+
 
   return (
     <section
