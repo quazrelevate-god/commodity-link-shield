@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
+import { useRef } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
@@ -23,22 +24,8 @@ const Eyebrow = ({ children }: { children: React.ReactNode }) => (
 export function Hero() {
   const titleWords = "Commodity Trade Has a Trust Problem. We Fixed It.".split(" ");
 
-  const cardsVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.25, delayChildren: 0.4 },
-    },
-  };
-  const cardItemVariants = {
-    hidden: { opacity: 0, x: 60, y: 20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] as const },
-    },
-  };
+
+
 
   return (
     <section
@@ -133,81 +120,182 @@ export function Hero() {
           </motion.p>
         </div>
 
-        {/* RIGHT — Buyer / Seller Cards */}
-        <motion.div
-          variants={cardsVariants}
-          initial="hidden"
-          animate="visible"
-          className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full"
-        >
-          {/* Back card — Buyer */}
-          <motion.div
-            variants={cardItemVariants}
-            className="absolute top-0 right-0 w-[72%] h-[88%] rounded-2xl overflow-hidden border border-border shadow-2xl"
-            style={{ boxShadow: "0 30px 80px -20px rgba(0,0,0,0.7)" }}
-          >
-            <img
-              src={buyerImg}
-              alt="Gulf importer at Dubai port"
-              width={896}
-              height={1216}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
-              Buyer
-            </div>
-            <div className="absolute bottom-5 left-5 right-5">
-              <div className="font-serif text-2xl text-foreground leading-tight">
-                Gulf Importers
-              </div>
-              <div className="text-xs text-subtext mt-1.5">
-                Verified buyers across UAE, Saudi & Qatar
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Front card — Seller */}
-          <motion.div
-            variants={cardItemVariants}
-            className="absolute bottom-0 left-0 w-[68%] h-[78%] rounded-2xl overflow-hidden border border-border shadow-2xl"
-            style={{ boxShadow: "0 40px 100px -20px rgba(0,0,0,0.85)" }}
-          >
-            <img
-              src={sellerImg}
-              alt="Indian exporter rice warehouse"
-              width={896}
-              height={1216}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-            <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
-              Seller
-            </div>
-            <div className="absolute bottom-5 left-5 right-5">
-              <div className="font-serif text-2xl text-foreground leading-tight">
-                Indian Exporters
-              </div>
-              <div className="text-xs text-subtext mt-1.5">
-                Rice, sugar & agri-commodities at source
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Floating connector badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.4, duration: 0.6 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-medium tracking-wide shadow-xl"
-          >
-            AI · Matched · Escrowed
-          </motion.div>
-        </motion.div>
+        {/* RIGHT — Buyer / Seller Cards (proximity reactive) */}
+        <ProximityCardStack />
       </div>
     </section>
   );
 }
+
+/* ---------- PROXIMITY-REACTIVE CARD STACK ---------- */
+function ProximityCardStack() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+
+  // Pointer position within container (px from top-left). -9999 means "far away".
+  const px = useMotionValue(-9999);
+  const py = useMotionValue(-9999);
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduce) return;
+    const r = containerRef.current?.getBoundingClientRect();
+    if (!r) return;
+    px.set(e.clientX - r.left);
+    py.set(e.clientY - r.top);
+  };
+  const handleLeave = () => {
+    px.set(-9999);
+    py.set(-9999);
+  };
+
+  return (
+    <motion.div
+      ref={containerRef}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.4, duration: 0.8 }}
+      className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full"
+    >
+      {/* Back — Buyer (tilts +5deg at rest) */}
+      <ProximityCard
+        px={px}
+        py={py}
+        reduce={!!reduce}
+        restRotate={5}
+        anchor={{ topPct: 0, leftPct: 28 }}
+        className="top-0 right-0 w-[72%] h-[88%]"
+        imgSrc={buyerImg}
+        imgAlt="Buyer using laptop"
+        label="Buyer"
+        title="Global Importers"
+        subtitle="Verified buyers sourcing at scale"
+        shadow="0 30px 80px -20px rgba(0,0,0,0.7)"
+      />
+
+      {/* Front — Seller (tilts -6deg at rest) */}
+      <ProximityCard
+        px={px}
+        py={py}
+        reduce={!!reduce}
+        restRotate={-6}
+        anchor={{ topPct: 22, leftPct: 0 }}
+        className="bottom-0 left-0 w-[68%] h-[78%]"
+        imgSrc={sellerImg}
+        imgAlt="Seller reviewing inventory"
+        label="Seller"
+        title="Verified Exporters"
+        subtitle="Producers trading at source"
+        shadow="0 40px 100px -20px rgba(0,0,0,0.85)"
+        z={2}
+      />
+
+      {/* Floating connector badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1.4, duration: 0.6 }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-medium tracking-wide shadow-xl pointer-events-none"
+      >
+        AI · Matched · Escrowed
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function ProximityCard({
+  px,
+  py,
+  reduce,
+  restRotate,
+  anchor,
+  className,
+  imgSrc,
+  imgAlt,
+  label,
+  title,
+  subtitle,
+  shadow,
+  z = 1,
+}: {
+  px: MotionValue<number>;
+  py: MotionValue<number>;
+  reduce: boolean;
+  restRotate: number;
+  anchor: { topPct: number; leftPct: number };
+  className: string;
+  imgSrc: string;
+  imgAlt: string;
+  label: string;
+  title: string;
+  subtitle: string;
+  shadow: string;
+  z?: number;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Compute proximity intensity t in [0,1] from cursor distance to card center.
+  // Radius ~240px feels right for "near".
+  const RADIUS = 240;
+  const intensity = useTransform([px, py], (vals) => {
+    const [x, y] = vals as [number, number];
+    if (x < -1000 || !cardRef.current) return 0;
+    const parent = cardRef.current.offsetParent as HTMLElement | null;
+    const cardR = cardRef.current.getBoundingClientRect();
+    const parR = parent?.getBoundingClientRect();
+    if (!parR) return 0;
+    const cx = cardR.left - parR.left + cardR.width / 2;
+    const cy = cardR.top - parR.top + cardR.height / 2;
+    const d = Math.hypot(x - cx, y - cy);
+    return Math.max(0, Math.min(1, 1 - d / RADIUS));
+  });
+
+  const spring = { stiffness: 180, damping: 22, mass: 0.6 };
+  const t = useSpring(intensity, spring);
+
+  const rotate = useTransform(t, [0, 1], [restRotate, 0]);
+  const scale = useTransform(t, [0, 1], [1, 1.045]);
+  const y = useTransform(t, [0, 1], [0, -12]);
+  const zIndex = useTransform(t, (v) => (v > 0.15 ? 10 : z));
+
+  return (
+    <motion.div
+      ref={cardRef}
+      style={
+        reduce
+          ? { boxShadow: shadow, zIndex: z }
+          : {
+              rotate,
+              scale,
+              y,
+              zIndex,
+              boxShadow: shadow,
+              transformOrigin: `${anchor.leftPct}% ${anchor.topPct}%`,
+              willChange: "transform",
+            }
+      }
+      className={`absolute rounded-2xl overflow-hidden border border-border ${className}`}
+    >
+      <img
+        src={imgSrc}
+        alt={imgAlt}
+        width={896}
+        height={1216}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
+        {label}
+      </div>
+      <div className="absolute bottom-5 left-5 right-5">
+        <div className="font-serif text-2xl text-foreground leading-tight">{title}</div>
+        <div className="text-xs text-subtext mt-1.5">{subtitle}</div>
+      </div>
+    </motion.div>
+  );
+}
+
 
 /* ---------- PROBLEM ---------- */
 export function Problem() {
