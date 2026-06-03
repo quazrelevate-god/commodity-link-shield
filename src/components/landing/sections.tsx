@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
@@ -128,13 +128,43 @@ export function Hero() {
 }
 
 /* ---------- PROXIMITY-REACTIVE CARD STACK ---------- */
+function useProximityIntensity(
+  px: MotionValue<number>,
+  py: MotionValue<number>,
+  ref: React.RefObject<HTMLDivElement | null>,
+  radius: number,
+) {
+  return useTransform([px, py], (vals) => {
+    const [x, y] = vals as [number, number];
+    if (x < -1000 || !ref.current) return 0;
+    const parent = ref.current.offsetParent as HTMLElement | null;
+    const cardR = ref.current.getBoundingClientRect();
+    const parR = parent?.getBoundingClientRect();
+    if (!parR) return 0;
+    const cx = cardR.left - parR.left + cardR.width / 2;
+    const cy = cardR.top - parR.top + cardR.height / 2;
+    const d = Math.hypot(x - cx, y - cy);
+    return Math.max(0, Math.min(1, 1 - d / radius));
+  });
+}
+
 function ProximityCardStack() {
   const containerRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
-  // Pointer position within container (px from top-left). -9999 means "far away".
   const px = useMotionValue(-9999);
   const py = useMotionValue(-9999);
+
+  const buyerRef = useRef<HTMLDivElement>(null);
+  const sellerRef = useRef<HTMLDivElement>(null);
+
+  const buyerRaw = useProximityIntensity(px, py, buyerRef, 280);
+  const sellerRaw = useProximityIntensity(px, py, sellerRef, 280);
+
+  // Smooth, physics-y spring — softer & heavier so the shuffle feels like weight, not magic.
+  const spring = { stiffness: 110, damping: 24, mass: 1 };
+  const tBuyer = useSpring(buyerRaw, spring);
+  const tSeller = useSpring(sellerRaw, spring);
 
   const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (reduce) return;
@@ -158,12 +188,16 @@ function ProximityCardStack() {
       transition={{ delay: 0.4, duration: 0.8 }}
       className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full"
     >
-      {/* Back — Buyer (tilts +5deg at rest) */}
+      {/* Back — Buyer (tilts +5deg at rest, top-right) */}
       <ProximityCard
-        px={px}
-        py={py}
+        ref={buyerRef}
+        t={tBuyer}
+        tOther={tSeller}
         reduce={!!reduce}
         restRotate={5}
+        // When seller is being approached, buyer slides further up-right to pave the way.
+        pushX={70}
+        pushY={-28}
         anchor={{ topPct: 0, leftPct: 28 }}
         className="top-0 right-0 w-[72%] h-[88%]"
         imgSrc={buyerImg}
@@ -172,14 +206,19 @@ function ProximityCardStack() {
         title="Global Importers"
         subtitle="Verified buyers sourcing at scale"
         shadow="0 30px 80px -20px rgba(0,0,0,0.7)"
+        baseZ={1}
       />
 
-      {/* Front — Seller (tilts -6deg at rest) */}
+      {/* Front — Seller (tilts -6deg at rest, bottom-left) */}
       <ProximityCard
-        px={px}
-        py={py}
+        ref={sellerRef}
+        t={tSeller}
+        tOther={tBuyer}
         reduce={!!reduce}
         restRotate={-6}
+        // When buyer is being approached, seller slides further down-left to pave the way.
+        pushX={-70}
+        pushY={28}
         anchor={{ topPct: 22, leftPct: 0 }}
         className="bottom-0 left-0 w-[68%] h-[78%]"
         imgSrc={sellerImg}
@@ -188,86 +227,84 @@ function ProximityCardStack() {
         title="Verified Exporters"
         subtitle="Producers trading at source"
         shadow="0 40px 100px -20px rgba(0,0,0,0.85)"
-        z={2}
+        baseZ={2}
       />
-
-      {/* Floating connector badge */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.4, duration: 0.6 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-medium tracking-wide shadow-xl pointer-events-none"
-      >
-        AI · Matched · Escrowed
-      </motion.div>
     </motion.div>
   );
 }
 
-function ProximityCard({
-  px,
-  py,
-  reduce,
-  restRotate,
-  anchor,
-  className,
-  imgSrc,
-  imgAlt,
-  label,
-  title,
-  subtitle,
-  shadow,
-  z = 1,
-}: {
-  px: MotionValue<number>;
-  py: MotionValue<number>;
-  reduce: boolean;
-  restRotate: number;
-  anchor: { topPct: number; leftPct: number };
-  className: string;
-  imgSrc: string;
-  imgAlt: string;
-  label: string;
-  title: string;
-  subtitle: string;
-  shadow: string;
-  z?: number;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
+const ProximityCard = React.forwardRef<
+  HTMLDivElement,
+  {
+    t: MotionValue<number>;
+    tOther: MotionValue<number>;
+    reduce: boolean;
+    restRotate: number;
+    pushX: number;
+    pushY: number;
+    anchor: { topPct: number; leftPct: number };
+    className: string;
+    imgSrc: string;
+    imgAlt: string;
+    label: string;
+    title: string;
+    subtitle: string;
+    shadow: string;
+    baseZ: number;
+  }
+>(function ProximityCard(
+  {
+    t,
+    tOther,
+    reduce,
+    restRotate,
+    pushX,
+    pushY,
+    anchor,
+    className,
+    imgSrc,
+    imgAlt,
+    label,
+    title,
+    subtitle,
+    shadow,
+    baseZ,
+  },
+  ref,
+) {
+  // Own proximity drives "come forward": straighten, scale, lift.
+  const rotate = useTransform(t, [0, 1], [restRotate, 0]);
+  const scale = useTransform(t, [0, 1], [1, 1.05]);
+  const lift = useTransform(t, [0, 1], [0, -14]);
 
-  // Compute proximity intensity t in [0,1] from cursor distance to card center.
-  // Radius ~240px feels right for "near".
-  const RADIUS = 240;
-  const intensity = useTransform([px, py], (vals) => {
-    const [x, y] = vals as [number, number];
-    if (x < -1000 || !cardRef.current) return 0;
-    const parent = cardRef.current.offsetParent as HTMLElement | null;
-    const cardR = cardRef.current.getBoundingClientRect();
-    const parR = parent?.getBoundingClientRect();
-    if (!parR) return 0;
-    const cx = cardR.left - parR.left + cardR.width / 2;
-    const cy = cardR.top - parR.top + cardR.height / 2;
-    const d = Math.hypot(x - cx, y - cy);
-    return Math.max(0, Math.min(1, 1 - d / RADIUS));
+  // Other card's proximity drives "pave the way": slide outward, then revert.
+  const xShove = useTransform(tOther, [0, 1], [0, pushX]);
+  const yShove = useTransform(tOther, [0, 1], [0, pushY]);
+
+  // Combined y = own lift + lateral shove vertical component.
+  const y = useTransform([lift, yShove], (vals) => {
+    const [a, b] = vals as [number, number];
+    return a + b;
   });
 
-  const spring = { stiffness: 180, damping: 22, mass: 0.6 };
-  const t = useSpring(intensity, spring);
-
-  const rotate = useTransform(t, [0, 1], [restRotate, 0]);
-  const scale = useTransform(t, [0, 1], [1, 1.045]);
-  const y = useTransform(t, [0, 1], [0, -12]);
-  const zIndex = useTransform(t, (v) => (v > 0.15 ? 10 : z));
+  // Z-index: whoever is more "active" floats above. Use baseZ as tiebreaker.
+  const zIndex = useTransform([t, tOther], (vals) => {
+    const [a, b] = vals as [number, number];
+    if (a > b + 0.05) return 30;
+    if (b > a + 0.05) return 5;
+    return baseZ + 10;
+  });
 
   return (
     <motion.div
-      ref={cardRef}
+      ref={ref}
       style={
         reduce
-          ? { boxShadow: shadow, zIndex: z }
+          ? { boxShadow: shadow, zIndex: baseZ }
           : {
               rotate,
               scale,
+              x: xShove,
               y,
               zIndex,
               boxShadow: shadow,
@@ -294,7 +331,7 @@ function ProximityCard({
       </div>
     </motion.div>
   );
-}
+});
 
 
 /* ---------- PROBLEM ---------- */
