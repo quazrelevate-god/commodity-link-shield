@@ -13,7 +13,15 @@ import {
   ArrowUp,
   Paperclip,
   Plus,
+  FileText,
+  Search,
+  MessagesSquare,
+  FileSignature,
+  Banknote,
+  Ship,
+  CheckCircle2,
 } from "lucide-react";
+import { ExpandingCards, type CardItem } from "@/components/ui/expanding-cards";
 
 import sellerImg from "@/assets/seller-card.jpg";
 import buyerImg from "@/assets/buyer-card.jpg";
