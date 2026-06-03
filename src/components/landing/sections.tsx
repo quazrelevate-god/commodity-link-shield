@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
