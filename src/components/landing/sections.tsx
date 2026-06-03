@@ -936,24 +936,57 @@ export function Corridor() {
 
 /* ---------- LOGO STRIP ---------- */
 export function LogoStrip() {
-  const logos = ["RICE TRADE CO", "GULF AGRI", "PUNJAB EXPORTS", "SHARJAH IMPORTS", "BASMATI HOUSE", "MUMBAI COMMODITIES", "DUBAI TRADE", "DELTA MILLS"];
+  const logos = [
+    "RICE TRADE CO",
+    "GULF AGRI",
+    "PUNJAB EXPORTS",
+    "SHARJAH IMPORTS",
+    "BASMATI HOUSE",
+    "MUMBAI COMMODITIES",
+    "DUBAI TRADE",
+    "DELTA MILLS",
+  ];
+
+  const getInitials = (name: string) =>
+    name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("");
+
   return (
     <section className="border-y border-border bg-surface-alt/50 py-12 overflow-hidden">
       <FadeUp>
-        <p className="text-center text-xs uppercase tracking-[0.22em] text-subtext mb-8">
+        <p className="text-center text-xs uppercase tracking-[0.22em] text-subtext mb-10">
           Trusted by traders across the India–Gulf corridor
         </p>
       </FadeUp>
       <div className="relative">
+        {/* Edge fades */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10 bg-gradient-to-r from-surface-alt/80 to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 z-10 bg-gradient-to-l from-surface-alt/80 to-transparent" />
+
         <motion.div
-          className="flex gap-16 whitespace-nowrap"
+          className="flex whitespace-nowrap"
           animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
         >
           {[...logos, ...logos, ...logos].map((l, i) => (
-            <span key={i} className="font-sans text-subtext/70 text-lg tracking-[0.2em] shrink-0">
-              {l}
-            </span>
+            <div
+              key={i}
+              className="flex items-center gap-3 shrink-0 w-[260px] justify-center opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <span
+                aria-hidden
+                className="flex items-center justify-center w-10 h-10 rounded-md border border-accent/40 bg-background font-serif text-accent text-base leading-none shrink-0"
+              >
+                {getInitials(l)}
+              </span>
+              <span className="font-sans text-subtext text-sm tracking-[0.18em] uppercase">
+                {l}
+              </span>
+            </div>
           ))}
         </motion.div>
       </div>
