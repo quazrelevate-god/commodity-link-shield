@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import sellerImg from "@/assets/seller-card.jpg";
 import buyerImg from "@/assets/buyer-card.jpg";
+import { RadialGlowBackground } from "@/components/ui/radial-glow-background";
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
   <div className="text-xs tracking-[0.22em] uppercase text-accent font-medium mb-6">
