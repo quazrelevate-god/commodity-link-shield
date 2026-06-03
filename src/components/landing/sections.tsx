@@ -574,7 +574,7 @@ export function BusinessModel() {
 
         <FadeUp delay={0.2}>
           <p className="mt-20 font-serif text-accent text-center max-w-3xl mx-auto leading-snug" style={{ fontSize: "26px" }}>
-            "The platform charges nothing until a deal closes. Your first move costs you zero."
+            "We charge nothing until a deal closes. Your first move costs you zero."
           </p>
         </FadeUp>
       </div>
