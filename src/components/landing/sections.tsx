@@ -439,12 +439,13 @@ export function Insight() {
         {/* Chat composer mock */}
         <FadeUp delay={0.2}>
           <div className="mt-12 group relative rounded-2xl border border-border bg-surface-alt/80 backdrop-blur-sm transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_60px_-20px_rgba(200,169,110,0.25)]">
-            <div className="px-6 pt-6 pb-4 min-h-[140px] text-left">
-              <p className="text-subtext text-base sm:text-lg leading-relaxed">
+            <div className="flex items-center px-6 pt-4 pb-2 text-left">
+              <p className="text-subtext text-sm sm:text-base leading-none truncate">
                 We don't just digitise brokerage. We re-engineer the trust layer of commodity trade.
               </p>
             </div>
-            <div className="flex items-center justify-between px-4 pb-4">
+            <div className="flex items-center justify-between px-4 pb-3">
+
               <button
                 type="button"
                 tabIndex={-1}
