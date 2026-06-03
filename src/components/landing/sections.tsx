@@ -331,7 +331,7 @@ const ProximityCard = React.forwardRef<
       </div>
     </motion.div>
   );
-}
+});
 
 
 /* ---------- PROBLEM ---------- */
