@@ -32,14 +32,9 @@ export function Hero() {
       id="top"
       className="relative min-h-screen flex items-center px-6 pt-32 pb-24 overflow-hidden"
     >
-      {/* Ambient gold glow */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 30% 20%, rgba(200,169,110,0.10), transparent 60%)",
-        }}
-      />
+      {/* Dark radial glow background */}
+      <RadialGlowBackground position="top" intensity={0.9} />
+
       {/* Faint grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.07]"
