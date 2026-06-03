@@ -534,8 +534,6 @@ export function Insight() {
 
 
 /* ---------- HOW IT WORKS ---------- */
-import { FileText, Search, MessagesSquare, FileSignature, Banknote, Ship, CheckCircle2 } from "lucide-react";
-import { ExpandingCards, type CardItem } from "@/components/ui/expanding-cards";
 
 export function HowItWorks() {
   const items: CardItem[] = [
