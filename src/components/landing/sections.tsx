@@ -31,20 +31,45 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative min-h-screen flex items-center px-6 pt-32 pb-24 overflow-hidden"
+      onMouseMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+      }}
+      className="group/hero relative min-h-screen flex items-center px-6 pt-32 pb-24 overflow-hidden [--mx:50%] [--my:0px]"
     >
-      {/* Dark radial glow background */}
-      <RadialGlowBackground position="top" intensity={0.9} />
+      {/* Half radial gold glow from the top */}
+      <RadialGlowBackground
+        position="top"
+        intensity={1}
+        glowColor="rgba(200, 169, 110, 0.45)"
+      />
 
-      {/* Faint grid */}
+      {/* Base gradient-faded grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.07]"
+        className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(to right, var(--border) 1px, transparent 1px)",
-          backgroundSize: "3rem 3rem",
+            "linear-gradient(rgba(200,169,110,0.18) 1px, transparent 1px), linear-gradient(to right, rgba(200,169,110,0.18) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
           maskImage:
-            "radial-gradient(ellipse at center, black 40%, transparent 80%)",
+            "radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, rgba(0,0,0,0.45) 45%, transparent 85%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, rgba(0,0,0,0.45) 45%, transparent 85%)",
+        }}
+      />
+
+      {/* Cursor spotlight: brighter grid follows the mouse */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 group-hover/hero:opacity-100"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(226,201,126,0.85) 1px, transparent 1px), linear-gradient(to right, rgba(226,201,126,0.85) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+          maskImage:
+            "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
+          WebkitMaskImage:
+            "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
         }}
       />
 
