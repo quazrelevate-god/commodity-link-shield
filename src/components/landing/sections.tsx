@@ -530,19 +530,33 @@ export function Market() {
 /* ---------- BUSINESS MODEL ---------- */
 export function BusinessModel() {
   const cards = [
-    ["Transaction Commission", "2% of deal value on every closed trade. A $200K rice deal = $4,000 per transaction. Volume compounds as the network grows."],
-    ["Subscription Intelligence", "$149–499/month for live commodity price feeds, demand signals, buyer analytics, and priority matching. Daily-use value that makes churn impossible."],
-    ["Managed Deal Services", "Full-service deal execution for high-value trades — document verification, logistics coordination, dispute resolution. Premium margin, repeat customers."],
+    [
+      "Verified Buyers. No Cold Calls.",
+      "Stop chasing unverified leads from WhatsApp groups. Every buyer on Commodity AI has passed KYB verification and put real intent on record. You only talk to buyers who are ready to move.",
+    ],
+    [
+      "Your Money Is Protected Before You Ship.",
+      "Funds are held in escrow before a single kilogram leaves your warehouse. You get paid when delivery is confirmed — not when the buyer feels like it, not after 60 days of chasing.",
+    ],
+    [
+      "Your Reputation Travels With You.",
+      "Every deal you close builds your Trust Score. The more you trade, the stronger your verified track record — and the more premium buyers you attract. Your history becomes your biggest competitive advantage.",
+    ],
   ];
   return (
     <section className="bg-surface-alt px-6 py-32">
       <div className="max-w-6xl mx-auto">
         <div className="text-center">
-          <FadeUp><Eyebrow>The Business</Eyebrow></FadeUp>
+          <FadeUp><Eyebrow>What You Get</Eyebrow></FadeUp>
           <FadeUp delay={0.1}>
-            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight">
-              Three Revenue Streams. One Compounding Moat.
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-4xl mx-auto" style={{ fontSize: "clamp(2rem, 4vw, 48px)" }}>
+              Your Export Business. Finally Running Like a Large One.
             </h2>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="mt-6 text-[18px] text-subtext max-w-[580px] mx-auto leading-relaxed">
+              Most Tier 2 exporters spend their entire career doing what large trading houses do with a 50-person team — sourcing, verifying, negotiating, documenting, chasing payments. Commodity AI is your entire back office. In one platform.
+            </p>
           </FadeUp>
         </div>
 
@@ -559,14 +573,15 @@ export function BusinessModel() {
         </div>
 
         <FadeUp delay={0.2}>
-          <p className="mt-20 font-serif italic text-2xl sm:text-3xl text-accent text-center max-w-3xl mx-auto leading-snug">
-            "Every closed deal trains our AI. Every trade enriches our dataset. No competitor can replicate what we accumulate."
+          <p className="mt-20 font-serif text-accent text-center max-w-3xl mx-auto leading-snug" style={{ fontSize: "26px" }}>
+            "The platform charges nothing until a deal closes. Your first move costs you zero."
           </p>
         </FadeUp>
       </div>
     </section>
   );
 }
+
 
 /* ---------- MOAT ---------- */
 export function Moat() {
