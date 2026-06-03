@@ -45,13 +45,17 @@ export function Hero() {
         glowColor="rgba(200, 169, 110, 0.45)"
       />
 
-      {/* Base gradient-faded grid */}
+      {/* Base gradient-faded grid + dots at every 5th intersection */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(200,169,110,0.18) 1px, transparent 1px), linear-gradient(to right, rgba(200,169,110,0.18) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
+          backgroundImage: [
+            "radial-gradient(circle, rgba(226,201,126,0.55) 1.2px, transparent 1.6px)",
+            "linear-gradient(rgba(200,169,110,0.16) 1px, transparent 1px)",
+            "linear-gradient(to right, rgba(200,169,110,0.16) 1px, transparent 1px)",
+          ].join(", "),
+          backgroundSize: "80px 80px, 16px 16px, 16px 16px",
+          backgroundPosition: "0 0, 0 0, 0 0",
           maskImage:
             "radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, rgba(0,0,0,0.45) 45%, transparent 85%)",
           WebkitMaskImage:
@@ -59,19 +63,24 @@ export function Hero() {
         }}
       />
 
-      {/* Cursor spotlight: brighter grid follows the mouse */}
+      {/* Cursor spotlight: brighter grid + dots follow the mouse */}
       <div
         className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 group-hover/hero:opacity-100"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(226,201,126,0.85) 1px, transparent 1px), linear-gradient(to right, rgba(226,201,126,0.85) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
+          backgroundImage: [
+            "radial-gradient(circle, rgba(226,201,126,1) 1.6px, transparent 2px)",
+            "linear-gradient(rgba(226,201,126,0.85) 1px, transparent 1px)",
+            "linear-gradient(to right, rgba(226,201,126,0.85) 1px, transparent 1px)",
+          ].join(", "),
+          backgroundSize: "80px 80px, 16px 16px, 16px 16px",
+          backgroundPosition: "0 0, 0 0, 0 0",
           maskImage:
             "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
           WebkitMaskImage:
             "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
         }}
       />
+
 
       <div className="relative max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
         {/* LEFT — Text */}
