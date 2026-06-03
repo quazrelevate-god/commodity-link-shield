@@ -13,7 +13,15 @@ import {
   ArrowUp,
   Paperclip,
   Plus,
+  FileText,
+  Search,
+  MessagesSquare,
+  FileSignature,
+  Banknote,
+  Ship,
+  CheckCircle2,
 } from "lucide-react";
+import { ExpandingCards, type CardItem } from "@/components/ui/expanding-cards";
 
 import sellerImg from "@/assets/seller-card.jpg";
 import buyerImg from "@/assets/buyer-card.jpg";
@@ -526,44 +534,39 @@ export function Insight() {
 
 
 /* ---------- HOW IT WORKS ---------- */
+
 export function HowItWorks() {
-  const steps = [
-    ["Seller Lists", "Exporter submits commodity, grade, quantity, port, and minimum price. KYC verified against GST, IEC, and trade documents."],
-    ["Buyer Requests", "Gulf importer submits requirements. Platform matches against verified, masked seller profiles ranked by spec fit and Trust Score."],
-    ["Anonymous Negotiation", "Both parties communicate via masked relay. Neither knows the other's identity. Platform holds all context."],
-    ["LOI Signed", "Digital Letter of Intent generated and signed by both parties. Circumvention clause locks the deal to the platform for 12 months."],
-    ["Escrow Funded", "Buyer deposits into licensed escrow. Seller identity revealed. Deal enters execution phase."],
-    ["Goods Shipped & Verified", "Shipping documents verified by platform ops team. Logistics tracked."],
-    ["Escrow Released", "Funds released to seller on delivery confirmation. Trust Scores updated for both parties. Deal complete."],
+  const items: CardItem[] = [
+    { id: 1, step: "Step 01", title: "Seller Lists", description: "Exporter submits commodity, grade, quantity, port, and minimum price. KYC verified against GST, IEC, and trade documents.", icon: <FileText /> },
+    { id: 2, step: "Step 02", title: "Buyer Requests", description: "Gulf importer submits requirements. Platform matches against verified, masked seller profiles ranked by spec fit and Trust Score.", icon: <Search /> },
+    { id: 3, step: "Step 03", title: "Anonymous Negotiation", description: "Both parties communicate via masked relay. Neither knows the other's identity. Platform holds all context.", icon: <MessagesSquare /> },
+    { id: 4, step: "Step 04", title: "LOI Signed", description: "Digital Letter of Intent generated and signed by both parties. Circumvention clause locks the deal to the platform for 12 months.", icon: <FileSignature /> },
+    { id: 5, step: "Step 05", title: "Escrow Funded", description: "Buyer deposits into licensed escrow. Seller identity revealed. Deal enters execution phase.", icon: <Banknote /> },
+    { id: 6, step: "Step 06", title: "Goods Shipped & Verified", description: "Shipping documents verified by platform ops team. Logistics tracked.", icon: <Ship /> },
+    { id: 7, step: "Step 07", title: "Escrow Released", description: "Funds released to seller on delivery confirmation. Trust Scores updated for both parties. Deal complete.", icon: <CheckCircle2 /> },
   ];
   return (
     <section id="how" className="bg-surface-alt px-6 py-32">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto">
           <FadeUp><Eyebrow>The Deal Flow</Eyebrow></FadeUp>
           <FadeUp delay={0.1}>
             <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight">
               A $200,000 deal. Closed safely. In 7 steps.
             </h2>
           </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="mt-6 text-subtext leading-relaxed">
+              Hover any step to expand. Every stage is verified, masked, and escrow-secured end to end.
+            </p>
+          </FadeUp>
         </div>
 
-        <div className="mt-20 relative">
-          <div className="absolute left-5 top-2 bottom-2 w-px bg-gradient-to-b from-accent/60 via-accent/20 to-transparent" />
-          <div className="space-y-12">
-            {steps.map(([t, d], i) => (
-              <FadeUp key={i} delay={i * 0.05}>
-                <div className="relative pl-16">
-                  <div className="absolute left-0 top-0 w-10 h-10 rounded-full border border-accent/50 bg-background flex items-center justify-center font-serif text-accent">
-                    {i + 1}
-                  </div>
-                  <h3 className="font-sans font-medium text-lg text-foreground">{t}</h3>
-                  <p className="mt-2 text-subtext leading-relaxed">{d}</p>
-                </div>
-              </FadeUp>
-            ))}
+        <FadeUp delay={0.2}>
+          <div className="mt-16">
+            <ExpandingCards items={items} />
           </div>
-        </div>
+        </FadeUp>
       </div>
     </section>
   );
