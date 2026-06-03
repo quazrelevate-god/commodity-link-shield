@@ -131,7 +131,7 @@ export function Hero() {
 function useProximityIntensity(
   px: MotionValue<number>,
   py: MotionValue<number>,
-  ref: React.RefObject<HTMLDivElement>,
+  ref: React.RefObject<HTMLDivElement | null>,
   radius: number,
 ) {
   return useTransform([px, py], (vals) => {
