@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import sellerImg from "@/assets/seller-card.jpg";
 import buyerImg from "@/assets/buyer-card.jpg";
+import { RadialGlowBackground } from "@/components/ui/radial-glow-background";
 
 const Eyebrow = ({ children }: { children: React.ReactNode }) => (
   <div className="text-xs tracking-[0.22em] uppercase text-accent font-medium mb-6">
@@ -32,14 +33,9 @@ export function Hero() {
       id="top"
       className="relative min-h-screen flex items-center px-6 pt-32 pb-24 overflow-hidden"
     >
-      {/* Ambient gold glow */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-60"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 30% 20%, rgba(200,169,110,0.10), transparent 60%)",
-        }}
-      />
+      {/* Dark radial glow background */}
+      <RadialGlowBackground position="top" intensity={0.9} />
+
       {/* Faint grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.07]"
