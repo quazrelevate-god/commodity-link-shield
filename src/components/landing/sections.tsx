@@ -415,36 +415,114 @@ export function Insight() {
     { Icon: Lock, t: "Escrow-Secured Deals", d: "Funds are held in a licensed escrow account and released only when both parties confirm delivery milestones. No wire transfers to strangers." },
     { Icon: MessageSquareLock, t: "Masked WhatsApp Relay", d: "All deal communication routes through our platform. Phone numbers are never exposed. Identity is protected until the deal is formally committed." },
   ];
+  const [active, setActive] = useState<number | null>(null);
+
   return (
-    <section className="px-6 py-32">
-      <div className="max-w-5xl mx-auto text-center">
+    <section className="relative px-6 py-32 overflow-hidden">
+      {/* subtle top radial glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[520px] -z-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(200,169,110,0.12), transparent 70%)",
+        }}
+      />
+      <div className="relative max-w-3xl mx-auto text-center">
         <FadeUp><Eyebrow>The Commodity AI Approach</Eyebrow></FadeUp>
         <FadeUp delay={0.1}>
           <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-3xl mx-auto">
             Anonymous Until Committed. Verified From Day One.
           </h2>
         </FadeUp>
+
+        {/* Chat composer mock */}
         <FadeUp delay={0.2}>
-          <p className="mt-6 text-lg text-subtext max-w-[580px] mx-auto">
-            We don't just digitise brokerage. We re-engineer the trust layer of commodity trade.
-          </p>
+          <div className="mt-12 group relative rounded-2xl border border-border bg-surface-alt/80 backdrop-blur-sm transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_60px_-20px_rgba(200,169,110,0.25)]">
+            <div className="px-6 pt-6 pb-4 min-h-[140px] text-left">
+              <p className="text-subtext text-base sm:text-lg leading-relaxed">
+                We don't just digitise brokerage. We re-engineer the trust layer of commodity trade.
+              </p>
+            </div>
+            <div className="flex items-center justify-between px-4 pb-4">
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-hidden
+                className="w-9 h-9 rounded-full flex items-center justify-center text-subtext hover:text-foreground hover:bg-background/40 transition-colors"
+              >
+                <Paperclip className="w-4 h-4" strokeWidth={1.5} />
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs text-subtext">
+                  <Plus className="w-3.5 h-3.5" strokeWidth={1.5} />
+                  New Deal
+                </div>
+                <div className="w-9 h-9 rounded-lg bg-background/60 border border-border flex items-center justify-center text-subtext">
+                  <ArrowUp className="w-4 h-4" strokeWidth={1.8} />
+                </div>
+              </div>
+            </div>
+          </div>
         </FadeUp>
 
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-          {blocks.map((b, i) => (
-            <FadeUp key={i} delay={(i % 2) * 0.1}>
-              <div className="rounded-2xl border border-border bg-surface-alt p-8 h-full hover:border-accent/40 transition-colors">
-                <b.Icon className="w-6 h-6 text-accent" strokeWidth={1.4} />
-                <h3 className="mt-5 font-sans font-medium text-lg text-foreground">{b.t}</h3>
-                <p className="mt-3 text-subtext text-sm leading-relaxed">{b.d}</p>
-              </div>
-            </FadeUp>
-          ))}
+        {/* Quick-action pills */}
+        <FadeUp delay={0.3}>
+          <div className="mt-6 flex flex-wrap justify-center gap-2.5">
+            {blocks.map((b, i) => {
+              const isActive = active === i;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setActive(isActive ? null : i)}
+                  onMouseEnter={() => setActive(i)}
+                  className={`group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-all duration-300 ${
+                    isActive
+                      ? "border-accent/50 text-foreground bg-surface-alt"
+                      : "border-border bg-surface-alt/60 text-subtext hover:text-foreground hover:border-accent/40"
+                  }`}
+                  style={isActive ? { boxShadow: "0 0 24px -8px rgba(200,169,110,0.3)" } : undefined}
+                >
+                  <b.Icon className="w-4 h-4 text-accent" strokeWidth={1.5} />
+                  <span>{b.t}</span>
+                </button>
+              );
+            })}
+          </div>
+        </FadeUp>
+
+        {/* Inline expanding description panel */}
+        <div className="mt-6 min-h-[80px]">
+          <AnimatePresence mode="wait">
+            {active !== null && (
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="mx-auto max-w-2xl rounded-xl border border-border bg-surface-alt/60 px-6 py-5 text-left"
+              >
+                <div className="flex items-start gap-3">
+                  {React.createElement(blocks[active].Icon, {
+                    className: "w-5 h-5 text-accent mt-0.5 shrink-0",
+                    strokeWidth: 1.5,
+                  })}
+                  <div>
+                    <h3 className="font-sans font-medium text-foreground">{blocks[active].t}</h3>
+                    <p className="mt-1.5 text-subtext text-sm leading-relaxed">{blocks[active].d}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ---------- HOW IT WORKS ---------- */
 export function HowItWorks() {
