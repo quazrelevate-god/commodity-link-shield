@@ -692,100 +692,37 @@ export function Traction() {
 }
 
 /* ---------- CORRIDOR / WHERE WE OPERATE ---------- */
+import DottedMap from "dotted-map/without-countries";
+import worldMapJson from "@/assets/world-map.json";
+
 export function Corridor() {
-  // Equirectangular projection helpers
-  const MAP_W = 1200;
-  const MAP_H = 560;
-  const project = (lat: number, lng: number) => ({
-    x: ((lng + 180) / 360) * MAP_W,
-    y: ((90 - lat) / 180) * MAP_H,
-  });
-
-  // Rough continent polygons (lat, lng vertices) — used to mask the dot field into recognizable land shapes.
-  const continents: Array<Array<[number, number]>> = [
-    // North America
-    [[72,-168],[72,-60],[60,-55],[48,-52],[40,-70],[25,-80],[15,-92],[18,-105],[30,-118],[55,-135],[70,-165]],
-    // Central America connector
-    [[18,-92],[8,-78],[10,-72],[18,-88]],
-    // South America
-    [[12,-72],[10,-50],[-5,-35],[-23,-40],[-35,-55],[-55,-70],[-35,-72],[-20,-78],[-5,-80],[5,-78]],
-    // Greenland
-    [[83,-45],[83,-20],[70,-22],[60,-45],[72,-55]],
-    // Europe
-    [[71,-10],[71,40],[60,42],[48,42],[42,28],[38,-10],[44,-10],[50,-5]],
-    // Africa
-    [[36,-12],[36,12],[32,32],[30,35],[12,45],[-2,42],[-18,40],[-35,20],[-35,18],[-12,12],[5,8],[16,-16],[28,-15]],
-    // Middle East / Arabia
-    [[40,28],[40,62],[25,60],[12,45],[20,35]],
-    // Russia / North Asia
-    [[78,40],[78,180],[60,180],[50,140],[45,90],[50,60],[60,42]],
-    // China / East Asia
-    [[50,90],[50,135],[40,140],[22,118],[20,98],[28,85]],
-    // SE Asia / India
-    [[35,68],[35,98],[22,98],[8,80],[8,72],[22,68]],
-    // Indonesia/Malay archipelago (rough)
-    [[7,95],[7,140],[-10,140],[-10,95]],
-    // Australia
-    [[-10,113],[-10,154],[-25,154],[-38,145],[-35,115]],
-    // Japan
-    [[45,140],[45,146],[33,130],[35,138]],
-    // UK / Ireland
-    [[60,-10],[60,2],[50,2],[50,-10]],
-  ];
-
-  const pointInPoly = (lat: number, lng: number, poly: Array<[number, number]>) => {
-    let inside = false;
-    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-      const [yi, xi] = poly[i];
-      const [yj, xj] = poly[j];
-      const intersect =
-        yi > lat !== yj > lat &&
-        lng < ((xj - xi) * (lat - yi)) / (yj - yi + 1e-9) + xi;
-      if (intersect) inside = !inside;
-    }
-    return inside;
-  };
-
-  const isLand = (lat: number, lng: number) =>
-    continents.some((c) => pointInPoly(lat, lng, c));
-
-  // Build dot grid
-  const COLS = 110;
-  const ROWS = 52;
-  const dots = React.useMemo(() => {
-    const out: { x: number; y: number }[] = [];
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const lng = (c / (COLS - 1)) * 360 - 180;
-        const lat = 90 - (r / (ROWS - 1)) * 180;
-        if (lat < -60) continue; // skip antarctica band
-        if (isLand(lat, lng)) {
-          const { x, y } = project(lat, lng);
-          out.push({ x, y });
-        }
-      }
-    }
-    return out;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const { points, viewBox, origin, destinations } = React.useMemo(() => {
+    const map = new DottedMap({ map: worldMapJson as any });
+    const pts = map.getPoints();
+    const w = map.image.width;
+    const h = map.image.height;
+    const cities = [
+      { name: "India", lat: 19.07, lng: 72.87 },
+      { name: "UAE", lat: 25.27, lng: 55.30 },
+      { name: "Oman", lat: 23.6, lng: 58.5 },
+      { name: "Saudi Arabia", lat: 24.7, lng: 46.7 },
+      { name: "Singapore", lat: 1.35, lng: 103.82 },
+      { name: "Malaysia", lat: 3.14, lng: 101.69 },
+      { name: "Nigeria", lat: 6.5, lng: 3.38 },
+      { name: "Kenya", lat: -1.29, lng: 36.82 },
+      { name: "UK", lat: 51.5, lng: -0.13 },
+    ];
+    const projected = cities.map((c) => {
+      const p = map.getPin({ lat: c.lat, lng: c.lng });
+      return { name: c.name, x: p?.x ?? 0, y: p?.y ?? 0 };
+    });
+    return {
+      points: pts,
+      viewBox: `0 0 ${w} ${h}`,
+      origin: projected[0],
+      destinations: projected.slice(1),
+    };
   }, []);
-
-  const cities = [
-    { name: "India", lat: 19.07, lng: 72.87, origin: true },
-    { name: "UAE", lat: 25.27, lng: 55.30 },
-    { name: "Oman", lat: 23.6, lng: 58.5 },
-    { name: "Saudi Arabia", lat: 24.7, lng: 46.7 },
-    { name: "Singapore", lat: 1.35, lng: 103.82 },
-    { name: "Malaysia", lat: 3.14, lng: 101.69 },
-    { name: "Nigeria", lat: 6.5, lng: 3.38 },
-    { name: "Kenya", lat: -1.29, lng: 36.82 },
-    { name: "UK", lat: 51.5, lng: -0.13 },
-  ];
-
-  const origin = project(cities[0].lat, cities[0].lng);
-  const destinations = cities.slice(1).map((c) => ({
-    name: c.name,
-    ...project(c.lat, c.lng),
-  }));
 
   const corridors = [
     ["India → UAE", "India → Oman", "India → Saudi Arabia"],
@@ -812,7 +749,7 @@ export function Corridor() {
         <FadeUp delay={0.2}>
           <div className="mt-16 relative w-full overflow-hidden">
             <svg
-              viewBox={`0 0 ${MAP_W} ${MAP_H}`}
+              viewBox={viewBox}
               className="w-full h-auto"
               preserveAspectRatio="xMidYMid meet"
             >
@@ -828,15 +765,15 @@ export function Corridor() {
                 </radialGradient>
               </defs>
 
-              {/* Continent dots */}
-              {dots.map((d, i) => (
-                <circle key={i} cx={d.x} cy={d.y} r={1.6} fill="#1E252D" />
+              {/* Continent dots from dotted-map */}
+              {points.map((p, i) => (
+                <circle key={i} cx={p.x} cy={p.y} r={0.32} fill="#1E252D" />
               ))}
 
               {/* Trade arcs from India to each destination */}
               {destinations.map((d, i) => {
                 const mx = (origin.x + d.x) / 2;
-                const my = Math.min(origin.y, d.y) - Math.abs(d.x - origin.x) * 0.25;
+                const my = Math.min(origin.y, d.y) - Math.abs(d.x - origin.x) * 0.22;
                 const path = `M ${origin.x} ${origin.y} Q ${mx} ${my} ${d.x} ${d.y}`;
                 return (
                   <motion.path
@@ -844,7 +781,7 @@ export function Corridor() {
                     d={path}
                     fill="none"
                     stroke="url(#arc-gold)"
-                    strokeWidth={1.2}
+                    strokeWidth={0.35}
                     strokeLinecap="round"
                     initial={{ pathLength: 0, opacity: 0 }}
                     whileInView={{ pathLength: 1, opacity: 1 }}
@@ -855,19 +792,19 @@ export function Corridor() {
               })}
 
               {/* Highlighted city dots with pulse */}
-              {[{ ...origin, name: "India", origin: true }, ...destinations].map((c, i) => (
+              {[origin, ...destinations].map((c, i) => (
                 <g key={c.name}>
                   <motion.circle
                     cx={c.x}
                     cy={c.y}
-                    r={14}
+                    r={3.2}
                     fill="url(#city-glow)"
                     initial={{ opacity: 0.2, scale: 0.6 }}
                     animate={{ opacity: [0.2, 0.55, 0.2], scale: [0.6, 1.4, 0.6] }}
                     transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.25, ease: "easeInOut" }}
                     style={{ transformOrigin: `${c.x}px ${c.y}px` }}
                   />
-                  <circle cx={c.x} cy={c.y} r={3} fill="#C8A96E" />
+                  <circle cx={c.x} cy={c.y} r={0.75} fill="#C8A96E" />
                 </g>
               ))}
             </svg>
@@ -907,6 +844,7 @@ export function Corridor() {
     </section>
   );
 }
+
 
 
 
