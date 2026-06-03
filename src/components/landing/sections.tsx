@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, type MotionValue } from "framer-motion";
-import React, { useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, AnimatePresence, type MotionValue } from "framer-motion";
+import React, { useRef, useState } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
@@ -10,7 +10,11 @@ import {
   Check,
   X,
   ArrowRight,
+  ArrowUp,
+  Paperclip,
+  Plus,
 } from "lucide-react";
+
 import sellerImg from "@/assets/seller-card.jpg";
 import buyerImg from "@/assets/buyer-card.jpg";
 import { RadialGlowBackground } from "@/components/ui/radial-glow-background";
