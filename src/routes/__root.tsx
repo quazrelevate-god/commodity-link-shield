@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Commodity AI" },
+      { name: "description", content: "Buyers - Sellers , AI Trading platform" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Commodity AI" },
+      { property: "og:description", content: "Buyers - Sellers , AI Trading platform" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Commodity AI" },
+      { name: "twitter:description", content: "Buyers - Sellers , AI Trading platform" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/VK08xD3vyeQFt3fYshFpbWDMYG02/social-images/social-1780565559445-width_567.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/VK08xD3vyeQFt3fYshFpbWDMYG02/social-images/social-1780565559445-width_567.webp" },
     ],
     links: [
       {
