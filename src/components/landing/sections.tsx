@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, AnimatePresence, type MotionValue } from "framer-motion";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
 import React, { useRef, useState } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
