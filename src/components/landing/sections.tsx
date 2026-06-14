@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
