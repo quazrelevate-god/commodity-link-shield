@@ -1,5 +1,5 @@
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, AnimatePresence, type MotionValue } from "framer-motion";
-import React, { useRef, useState } from "react";
+import { motion, useReducedMotion, AnimatePresence } from "framer-motion";
+import React, { useState } from "react";
 import { FadeUp } from "./FadeUp";
 import { CountUp } from "./CountUp";
 import {
@@ -132,218 +132,143 @@ export function Hero() {
           </motion.p>
         </div>
 
-        {/* RIGHT — Buyer / Seller Cards (proximity reactive) */}
-        <ProximityCardStack />
+        {/* RIGHT — Single floating, breathing, flip-on-hover card */}
+        <FloatingFlipCard />
       </div>
     </section>
   );
 }
 
-/* ---------- PROXIMITY-REACTIVE CARD STACK ---------- */
-function useProximityIntensity(
-  px: MotionValue<number>,
-  py: MotionValue<number>,
-  ref: React.RefObject<HTMLDivElement | null>,
-  radius: number,
-) {
-  return useTransform([px, py], (vals) => {
-    const [x, y] = vals as [number, number];
-    if (x < -1000 || !ref.current) return 0;
-    const parent = ref.current.offsetParent as HTMLElement | null;
-    const cardR = ref.current.getBoundingClientRect();
-    const parR = parent?.getBoundingClientRect();
-    if (!parR) return 0;
-    const cx = cardR.left - parR.left + cardR.width / 2;
-    const cy = cardR.top - parR.top + cardR.height / 2;
-    const d = Math.hypot(x - cx, y - cy);
-    return Math.max(0, Math.min(1, 1 - d / radius));
-  });
-}
-
-function ProximityCardStack() {
-  const containerRef = useRef<HTMLDivElement>(null);
+/* ---------- FLOATING FLIP CARD ---------- */
+function FloatingFlipCard() {
   const reduce = useReducedMotion();
-
-  const px = useMotionValue(-9999);
-  const py = useMotionValue(-9999);
-
-  const buyerRef = useRef<HTMLDivElement>(null);
-  const sellerRef = useRef<HTMLDivElement>(null);
-
-  const buyerRaw = useProximityIntensity(px, py, buyerRef, 280);
-  const sellerRaw = useProximityIntensity(px, py, sellerRef, 280);
-
-  // Smooth, physics-y spring — softer & heavier so the shuffle feels like weight, not magic.
-  const spring = { stiffness: 110, damping: 24, mass: 1 };
-  const tBuyer = useSpring(buyerRaw, spring);
-  const tSeller = useSpring(sellerRaw, spring);
-
-  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (reduce) return;
-    const r = containerRef.current?.getBoundingClientRect();
-    if (!r) return;
-    px.set(e.clientX - r.left);
-    py.set(e.clientY - r.top);
-  };
-  const handleLeave = () => {
-    px.set(-9999);
-    py.set(-9999);
-  };
+  const [flipped, setFlipped] = React.useState(false);
 
   return (
     <motion.div
-      ref={containerRef}
-      onMouseMove={handleMove}
-      onMouseLeave={handleLeave}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.4, duration: 0.8 }}
-      className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full"
+      className="relative h-[520px] sm:h-[600px] lg:h-[640px] w-full flex items-center justify-center"
+      style={{ perspective: 1600 }}
     >
-      {/* Back — Buyer (tilts +5deg at rest, top-right) */}
-      <ProximityCard
-        ref={buyerRef}
-        t={tBuyer}
-        tOther={tSeller}
-        reduce={!!reduce}
-        restRotate={5}
-        // When seller is being approached, buyer slides further up-right to pave the way.
-        pushX={70}
-        pushY={-28}
-        anchor={{ topPct: 0, leftPct: 28 }}
-        className="top-0 right-0 w-[72%] h-[88%]"
-        imgSrc={buyerImg}
-        imgAlt="Buyer using laptop"
-        label="Buyer"
-        title="Global Importers"
-        subtitle="Verified buyers sourcing at scale"
-        shadow="0 30px 80px -20px rgba(0,0,0,0.7)"
-        baseZ={1}
+      {/* Gold floor shadow */}
+      <motion.div
+        aria-hidden
+        className="absolute left-1/2 bottom-[8%] -translate-x-1/2 rounded-[50%] blur-2xl pointer-events-none"
+        style={{
+          width: "62%",
+          height: 60,
+          background:
+            "radial-gradient(ellipse at center, rgba(200,169,110,0.55), rgba(200,169,110,0.15) 55%, transparent 75%)",
+        }}
+        animate={
+          reduce
+            ? undefined
+            : { scaleX: [1, 0.88, 1], opacity: [0.85, 0.6, 0.85] }
+        }
+        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* Front — Seller (tilts -6deg at rest, bottom-left) */}
-      <ProximityCard
-        ref={sellerRef}
-        t={tSeller}
-        tOther={tBuyer}
-        reduce={!!reduce}
-        restRotate={-6}
-        // When buyer is being approached, seller slides further down-left to pave the way.
-        pushX={-70}
-        pushY={28}
-        anchor={{ topPct: 22, leftPct: 0 }}
-        className="bottom-0 left-0 w-[68%] h-[78%]"
-        imgSrc={sellerImg}
-        imgAlt="Seller reviewing inventory"
-        label="Seller"
-        title="Verified Exporters"
-        subtitle="Producers trading at source"
-        shadow="0 40px 100px -20px rgba(0,0,0,0.85)"
-        baseZ={2}
-      />
+      {/* Breathing + half-turned wrapper */}
+      <motion.div
+        className="relative w-[70%] h-[78%] cursor-pointer"
+        style={{ transformStyle: "preserve-3d" }}
+        initial={{ rotateX: 6, rotateY: -22, y: 0 }}
+        animate={
+          reduce
+            ? { rotateY: flipped ? -22 + 360 : -22 }
+            : {
+                y: [0, -14, 0],
+                rotateX: [6, 4, 6],
+                rotateY: flipped ? [-22, 158, 338] : -22,
+                scale: [1, 1.015, 1],
+              }
+        }
+        transition={{
+          y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          rotateX: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+          rotateY: flipped
+            ? { duration: 1.6, ease: [0.22, 1, 0.36, 1] }
+            : { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+        }}
+        onHoverStart={() => setFlipped(true)}
+        onHoverEnd={() => setFlipped(false)}
+        onTap={() => setFlipped((f) => !f)}
+        onAnimationComplete={() => {
+          // reset rotateY base after a full flip so it can flip again
+          if (flipped) setFlipped(false);
+        }}
+      >
+        {/* FRONT */}
+        <div
+          className="absolute inset-0 rounded-2xl overflow-hidden border border-border"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            boxShadow:
+              "0 40px 100px -20px rgba(0,0,0,0.85), 0 0 80px -20px rgba(200,169,110,0.35)",
+          }}
+        >
+          <img
+            src={sellerImg}
+            alt="Verified exporter reviewing inventory"
+            width={896}
+            height={1216}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+          <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
+            Verified Trade
+          </div>
+          <div className="absolute bottom-5 left-5 right-5">
+            <div className="font-serif text-2xl text-foreground leading-tight">
+              Anonymous Until Committed
+            </div>
+            <div className="text-xs text-subtext mt-1.5">
+              Buyers &amp; sellers, matched by AI — identities masked until both sides agree.
+            </div>
+          </div>
+        </div>
+
+        {/* BACK */}
+        <div
+          className="absolute inset-0 rounded-2xl overflow-hidden border border-accent/30"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "rotateY(180deg)",
+            background:
+              "radial-gradient(ellipse 90% 70% at 30% 0%, rgba(200,169,110,0.22), transparent 60%), linear-gradient(135deg, #0E1318 0%, #080B0F 100%)",
+            boxShadow:
+              "0 40px 100px -20px rgba(0,0,0,0.85), 0 0 80px -20px rgba(200,169,110,0.45)",
+          }}
+        >
+          <img
+            src={buyerImg}
+            alt="Global importer sourcing at scale"
+            width={896}
+            height={1216}
+            className="absolute inset-0 w-full h-full object-cover opacity-40"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/20" />
+          <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-accent/15 backdrop-blur-md border border-accent/40 text-[10px] tracking-[0.22em] uppercase text-accent">
+            Escrow Secured
+          </div>
+          <div className="absolute bottom-5 left-5 right-5">
+            <div className="font-serif text-2xl text-foreground leading-tight">
+              Verified From Day One
+            </div>
+            <div className="text-xs text-subtext mt-1.5">
+              Every deal flows through escrow, with masked WhatsApp relay and an AI-verified trust score.
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
-
-const ProximityCard = React.forwardRef<
-  HTMLDivElement,
-  {
-    t: MotionValue<number>;
-    tOther: MotionValue<number>;
-    reduce: boolean;
-    restRotate: number;
-    pushX: number;
-    pushY: number;
-    anchor: { topPct: number; leftPct: number };
-    className: string;
-    imgSrc: string;
-    imgAlt: string;
-    label: string;
-    title: string;
-    subtitle: string;
-    shadow: string;
-    baseZ: number;
-  }
->(function ProximityCard(
-  {
-    t,
-    tOther,
-    reduce,
-    restRotate,
-    pushX,
-    pushY,
-    anchor,
-    className,
-    imgSrc,
-    imgAlt,
-    label,
-    title,
-    subtitle,
-    shadow,
-    baseZ,
-  },
-  ref,
-) {
-  // Own proximity drives "come forward": straighten, scale, lift.
-  const rotate = useTransform(t, [0, 1], [restRotate, 0]);
-  const scale = useTransform(t, [0, 1], [1, 1.05]);
-  const lift = useTransform(t, [0, 1], [0, -14]);
-
-  // Other card's proximity drives "pave the way": slide outward, then revert.
-  const xShove = useTransform(tOther, [0, 1], [0, pushX]);
-  const yShove = useTransform(tOther, [0, 1], [0, pushY]);
-
-  // Combined y = own lift + lateral shove vertical component.
-  const y = useTransform([lift, yShove], (vals) => {
-    const [a, b] = vals as [number, number];
-    return a + b;
-  });
-
-  // Z-index: whoever is more "active" floats above. Use baseZ as tiebreaker.
-  const zIndex = useTransform([t, tOther], (vals) => {
-    const [a, b] = vals as [number, number];
-    if (a > b + 0.05) return 30;
-    if (b > a + 0.05) return 5;
-    return baseZ + 10;
-  });
-
-  return (
-    <motion.div
-      ref={ref}
-      style={
-        reduce
-          ? { boxShadow: shadow, zIndex: baseZ }
-          : {
-              rotate,
-              scale,
-              x: xShove,
-              y,
-              zIndex,
-              boxShadow: shadow,
-              transformOrigin: `${anchor.leftPct}% ${anchor.topPct}%`,
-              willChange: "transform",
-            }
-      }
-      className={`absolute rounded-2xl overflow-hidden border border-border ${className}`}
-    >
-      <img
-        src={imgSrc}
-        alt={imgAlt}
-        width={896}
-        height={1216}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-background/70 backdrop-blur-md border border-border text-[10px] tracking-[0.22em] uppercase text-accent">
-        {label}
-      </div>
-      <div className="absolute bottom-5 left-5 right-5">
-        <div className="font-serif text-2xl text-foreground leading-tight">{title}</div>
-        <div className="text-xs text-subtext mt-1.5">{subtitle}</div>
-      </div>
-    </motion.div>
-  );
-});
 
 
 /* ---------- PROBLEM ---------- */
