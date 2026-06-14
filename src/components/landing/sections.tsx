@@ -159,8 +159,8 @@ export function Hero() {
             transition={{ delay: 1.3, duration: 0.6 }}
             className="mt-6 text-sm text-subtext max-w-[480px]"
           >
-            Used by exporters moving $500K+ in rice, sugar & agri-commodities
-            across India–UAE corridors.
+            Trusted by exporters and importers moving $500K+ in rice, sugar,
+            spices and agri-commodities across global trade corridors.
           </motion.p>
         </div>
 
