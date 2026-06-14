@@ -1037,6 +1037,351 @@ export function FinalCTA() {
   );
 }
 
+/* ---------- TRUST + ESCROW + VERIFICATION (merged §5) ---------- */
+export function TrustEscrow() {
+  const score = [
+    { label: "KYC & Identity", weight: 30 },
+    { label: "Trade History", weight: 30 },
+    { label: "On-time Delivery", weight: 25 },
+    { label: "Dispute Rate", weight: 15 },
+  ];
+  return (
+    <section className="px-6 py-32 bg-surface-alt">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Trust, Verified — Money, Protected</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-4xl mx-auto">
+              Every Counterparty Verified. Every Rupee in Escrow.
+            </h2>
+          </FadeUp>
+          <FadeUp delay={0.15}>
+            <p className="mt-6 text-[18px] text-subtext max-w-[640px] mx-auto leading-relaxed">
+              The three layers of protection that turn a cold contact into a closed deal — without you ever having to guess who's on the other side.
+            </p>
+          </FadeUp>
+        </div>
+
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Trust Score breakdown */}
+          <FadeUp>
+            <div className="rounded-2xl border border-border bg-background p-8 h-full hover:border-accent/40 transition-colors">
+              <ShieldCheck className="w-7 h-7 text-accent mb-5" strokeWidth={1.6} />
+              <h3 className="font-serif text-2xl text-foreground">Trust Score (0–1000)</h3>
+              <p className="mt-3 text-subtext text-sm leading-relaxed">
+                A single number every trader carries with them — built from verified, closed-loop signals only.
+              </p>
+              <div className="mt-6 space-y-3">
+                {score.map((s, i) => (
+                  <div key={s.label}>
+                    <div className="flex justify-between text-xs text-subtext mb-1.5">
+                      <span>{s.label}</span>
+                      <span className="text-accent">{s.weight}%</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-border overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${s.weight * 3.3}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, delay: 0.2 + i * 0.1, ease: "easeOut" }}
+                        className="h-full bg-accent"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeUp>
+
+          {/* Verification */}
+          <FadeUp delay={0.1}>
+            <div className="rounded-2xl border border-border bg-background p-8 h-full hover:border-accent/40 transition-colors">
+              <CheckCircle2 className="w-7 h-7 text-accent mb-5" strokeWidth={1.6} />
+              <h3 className="font-serif text-2xl text-foreground">Verification Layer</h3>
+              <p className="mt-3 text-subtext text-sm leading-relaxed">
+                Nobody trades on Commodity AI without clearing it first.
+              </p>
+              <ul className="mt-6 space-y-3 text-sm text-foreground/90">
+                {["Business KYB & beneficial ownership", "Export/import licence checks", "Bank account & GST validation", "Trade-reference cross-verification"].map((it) => (
+                  <li key={it} className="flex gap-3"><Check className="w-4 h-4 mt-0.5 text-accent shrink-0" strokeWidth={2} /><span>{it}</span></li>
+                ))}
+              </ul>
+            </div>
+          </FadeUp>
+
+          {/* Escrow */}
+          <FadeUp delay={0.2}>
+            <div className="rounded-2xl border border-accent/40 bg-accent/[0.03] p-8 h-full">
+              <Lock className="w-7 h-7 text-accent mb-5" strokeWidth={1.6} />
+              <h3 className="font-serif text-2xl text-foreground">Escrow & Payment Safety</h3>
+              <p className="mt-3 text-subtext text-sm leading-relaxed">
+                Funds are locked the moment a deal is signed and released the moment delivery is confirmed.
+              </p>
+              <ul className="mt-6 space-y-3 text-sm text-foreground/90">
+                {["Regulated escrow partner, segregated accounts", "Milestone-based release (load → ship → deliver)", "Dispute window before final release", "Full audit trail on every transaction"].map((it) => (
+                  <li key={it} className="flex gap-3"><Check className="w-4 h-4 mt-0.5 text-accent shrink-0" strokeWidth={2} /><span>{it}</span></li>
+                ))}
+              </ul>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- WHATSAPP-FIRST + COMMODITY FOCUS (§6 intro, pairs with Corridor) ---------- */
+export function WhatsAppGlobal() {
+  const commodities = ["Basmati Rice", "Sugar", "Spices", "Pulses", "Edible Oils", "Tea", "Cotton", "Steel"];
+  return (
+    <section className="px-6 py-32">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Built for the Way You Actually Trade</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-4xl mx-auto">
+              Where Real Traders Already Live. On Commodities That Actually Move.
+            </h2>
+          </FadeUp>
+        </div>
+
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FadeUp>
+            <div className="rounded-2xl border border-border bg-surface-alt p-8 h-full hover:border-accent/40 transition-colors">
+              <MessageSquareLock className="w-7 h-7 text-accent mb-5" strokeWidth={1.6} />
+              <h3 className="font-serif text-2xl text-foreground">WhatsApp-First Workflow</h3>
+              <p className="mt-4 text-subtext leading-relaxed">
+                Quotes, counter-offers, document exchange and shipment updates happen in the tool your counterparty already opens 80 times a day — Commodity AI sits on top of WhatsApp instead of asking anyone to learn a new app. Identities stay masked until escrow is funded.
+              </p>
+            </div>
+          </FadeUp>
+
+          <FadeUp delay={0.1}>
+            <div className="rounded-2xl border border-border bg-surface-alt p-8 h-full hover:border-accent/40 transition-colors">
+              <FileText className="w-7 h-7 text-accent mb-5" strokeWidth={1.6} />
+              <h3 className="font-serif text-2xl text-foreground">Commodity Focus</h3>
+              <p className="mt-4 text-subtext leading-relaxed">
+                We don't try to be a marketplace for everything. We go deep on the agri and bulk commodities that move volume across borders every single day.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {commodities.map((c) => (
+                  <span key={c} className="rounded-full border border-accent/30 bg-background px-3 py-1.5 text-xs text-foreground/90 uppercase tracking-[0.14em]">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- PERSONAS — Who Is This For (§7) ---------- */
+export function Personas() {
+  const personas = [
+    {
+      role: "Exporters",
+      title: "Stop chasing unverified buyers.",
+      points: ["Verified buyers, real intent on record", "Get paid via escrow before risk", "Build a Trust Score that travels with you"],
+    },
+    {
+      role: "Importers",
+      title: "Stop wiring money into hope.",
+      points: ["Verified suppliers with proven track record", "Quality & docs checked before release", "Funds released only on confirmed delivery"],
+    },
+    {
+      role: "Brokers",
+      title: "Stop losing deals to circumvention.",
+      points: ["Identities masked end-to-end", "Circumvention clause baked into every deal", "Earn on every closed transaction, transparently"],
+    },
+  ];
+  return (
+    <section className="px-6 py-32 bg-surface-alt">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Who Is This For</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-3xl mx-auto">
+              One Platform. Three Sides of the Same Deal.
+            </h2>
+          </FadeUp>
+        </div>
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {personas.map((p, i) => (
+            <FadeUp key={p.role} delay={i * 0.1}>
+              <div className="rounded-2xl border border-border bg-background p-8 h-full hover:border-accent/40 transition-colors">
+                <div className="text-xs uppercase tracking-[0.22em] text-accent mb-4">{p.role}</div>
+                <h3 className="font-serif text-2xl text-foreground leading-snug">{p.title}</h3>
+                <ul className="mt-6 space-y-3 text-sm text-foreground/90">
+                  {p.points.map((pt) => (
+                    <li key={pt} className="flex gap-3"><Check className="w-4 h-4 mt-0.5 text-accent shrink-0" strokeWidth={2} /><span>{pt}</span></li>
+                  ))}
+                </ul>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- TRACTION + MOAT (merged §8) ---------- */
+export function TractionMoat() {
+  const stats = [
+    { to: 500, suffix: "+", label: "Verified traders onboarded" },
+    { to: 12, prefix: "$", suffix: "M+", label: "Deal volume in pipeline" },
+    { to: 4, suffix: "", label: "Active trade corridors" },
+    { to: 98, suffix: "%", label: "On-time settlement rate" },
+  ];
+  const moat = [
+    "AI-verified blind broker network",
+    "Trust Score — 0 to 1000 per trader",
+    "Identity protected until escrow funds",
+    "Proprietary closed-deal intelligence",
+    "Document verification at every step",
+  ];
+  return (
+    <section className="px-6 py-32">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Traction & Why We Win</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight max-w-4xl mx-auto">
+              Early Numbers. Compounding Moat.
+            </h2>
+          </FadeUp>
+        </div>
+
+        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {stats.map((s, i) => (
+            <FadeUp key={s.label} delay={i * 0.08}>
+              <div className="rounded-2xl border border-border bg-surface-alt p-6 text-center h-full">
+                <div className="font-serif text-4xl md:text-5xl text-accent">
+                  <CountUp to={s.to} prefix={s.prefix} suffix={s.suffix} />
+                </div>
+                <p className="mt-3 text-xs text-subtext leading-snug">{s.label}</p>
+              </div>
+            </FadeUp>
+          ))}
+        </div>
+
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          <FadeUp>
+            <div className="rounded-2xl border border-accent/40 bg-accent/[0.03] p-8 h-full">
+              <div className="text-xs uppercase tracking-[0.2em] text-accent mb-6">What only we have</div>
+              <ul className="space-y-4">
+                {moat.map((m) => (
+                  <li key={m} className="flex items-start gap-3 text-foreground">
+                    <Check className="w-4 h-4 mt-1 shrink-0 text-accent" strokeWidth={2} />
+                    <span>{m}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </FadeUp>
+          <FadeUp delay={0.1}>
+            <div className="rounded-2xl border border-border bg-surface-alt p-8 h-full">
+              <div className="text-xs uppercase tracking-[0.2em] text-subtext mb-6">The data flywheel</div>
+              <p className="text-subtext leading-relaxed">
+                Every closed deal generates a verified, closed-loop data point no public database contains —
+                buyer identity, seller reliability, commodity grade accuracy, price benchmark, logistics outcome,
+                payment behaviour. By deal 500, we hold the most valuable proprietary commodity intelligence
+                dataset in the corridor. By deal 5,000, no competitor can enter.
+              </p>
+              <p className="mt-6 font-serif text-accent text-lg leading-snug">
+                "The moat is not the technology. It is the data no one else will ever have."
+              </p>
+            </div>
+          </FadeUp>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- FAQ (§9) ---------- */
+export function FAQ() {
+  const faqs = [
+    {
+      q: "How is my identity actually protected?",
+      a: "Buyer and seller identities, contact details and company names are masked end-to-end during discovery and negotiation. Identities are only revealed after escrow is funded and a circumvention clause is signed — so neither side can bypass the platform.",
+    },
+    {
+      q: "What stops a counterparty from going around me after one deal?",
+      a: "Every deal carries a binding circumvention clause and an audit trail. We also relay communication through masked channels, so contact details never leak. Repeat offenders are removed from the network and their Trust Score reflects it permanently.",
+    },
+    {
+      q: "How does the escrow actually work?",
+      a: "Funds are deposited with a regulated escrow partner in a segregated account, locked the moment a deal is signed. Money releases against verifiable milestones — load confirmation, shipment, and confirmed delivery — with a dispute window before final release.",
+    },
+    {
+      q: "What does the Trust Score measure?",
+      a: "A 0–1000 score built from four signals only: KYC & identity (30%), trade history (30%), on-time delivery (25%), and dispute rate (15%). No self-reported reviews, no paid boosts. Every point is earned from a closed, verified deal.",
+    },
+    {
+      q: "Which commodities and corridors do you currently support?",
+      a: "Rice, sugar, spices, pulses, edible oils, tea, cotton and steel today, across multiple active corridors including India ↔ Gulf, India ↔ Southeast Asia, India ↔ Africa and India ↔ UK. New corridors open when verified trader demand is in.",
+    },
+    {
+      q: "What does it cost?",
+      a: "Onboarding is free. There is no subscription, no per-listing fee. We charge a small success fee only when a deal closes through escrow on the platform.",
+    },
+  ];
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section className="px-6 py-32 bg-surface-alt">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center">
+          <FadeUp><Eyebrow>Questions, Answered</Eyebrow></FadeUp>
+          <FadeUp delay={0.1}>
+            <h2 className="font-serif text-3xl sm:text-5xl text-foreground leading-tight">
+              The Things Every Trader Asks Us First.
+            </h2>
+          </FadeUp>
+        </div>
+        <div className="mt-14 space-y-3">
+          {faqs.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <FadeUp key={f.q} delay={i * 0.05}>
+                <div
+                  className={`rounded-xl border bg-background overflow-hidden transition-colors ${isOpen ? "border-accent/40" : "border-border hover:border-accent/30"}`}
+                >
+                  <button
+                    onClick={() => setOpen(isOpen ? null : i)}
+                    className="w-full flex items-center justify-between gap-4 text-left px-6 py-5"
+                  >
+                    <span className="font-sans text-foreground text-base">{f.q}</span>
+                    <Plus
+                      className={`w-4 h-4 shrink-0 text-accent transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+                      strokeWidth={1.8}
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                      >
+                        <p className="px-6 pb-6 text-subtext leading-relaxed text-sm">{f.a}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </FadeUp>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------- FOOTER ---------- */
 export function Footer() {
   return (
