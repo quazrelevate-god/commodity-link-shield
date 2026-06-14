@@ -960,7 +960,7 @@ export function LogoStrip() {
     <section className="border-y border-border bg-surface-alt/50 py-12 overflow-hidden">
       <FadeUp>
         <p className="text-center text-xs uppercase tracking-[0.22em] text-subtext mb-10">
-          Trusted by traders across the India–Gulf corridor
+          Trusted by traders across global commodity corridors
         </p>
       </FadeUp>
       <div className="relative">
