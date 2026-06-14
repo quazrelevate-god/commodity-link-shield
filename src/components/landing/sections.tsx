@@ -127,8 +127,9 @@ export function Hero() {
             className="mt-8 text-lg sm:text-xl text-subtext max-w-[540px] leading-relaxed"
           >
             Commodity AI is the world's first verified blind-broker platform —
-            connecting Indian exporters with Gulf importers through AI-matched
-            deals, protected identities, and escrow-secured payments.
+            connecting exporters and importers across every major trade corridor
+            through AI-matched deals, protected identities, and escrow-secured
+            payments.
           </motion.p>
 
           <motion.div
