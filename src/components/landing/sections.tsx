@@ -57,41 +57,8 @@ export function Hero() {
         glowColor="rgba(200, 169, 110, 0.45)"
       />
 
-      {/* Base gradient-faded grid + dots at every 5th intersection */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: [
-            "radial-gradient(circle at 0 0, rgba(226,201,126,0.5) 1.4px, transparent 1.8px)",
-            "linear-gradient(rgba(200,169,110,0.16) 1px, transparent 1px)",
-            "linear-gradient(to right, rgba(200,169,110,0.16) 1px, transparent 1px)",
-          ].join(", "),
-          backgroundSize: "80px 80px, 16px 16px, 16px 16px",
-          backgroundPosition: "0 0, 0 0, 0 0",
-          maskImage:
-            "radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, rgba(0,0,0,0.45) 45%, transparent 85%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 70% 55% at 50% 0%, black 0%, rgba(0,0,0,0.45) 45%, transparent 85%)",
-        }}
-      />
-
-      {/* Cursor spotlight: subtle brightness lift around the mouse */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-500 group-hover/hero:opacity-100"
-        style={{
-          backgroundImage: [
-            "radial-gradient(circle at 0 0, rgba(226,201,126,0.35) 1.4px, transparent 1.8px)",
-            "linear-gradient(rgba(226,201,126,0.25) 1px, transparent 1px)",
-            "linear-gradient(to right, rgba(226,201,126,0.25) 1px, transparent 1px)",
-          ].join(", "),
-          backgroundSize: "80px 80px, 16px 16px, 16px 16px",
-          backgroundPosition: "0 0, 0 0, 0 0",
-          maskImage:
-            "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
-          WebkitMaskImage:
-            "radial-gradient(260px circle at var(--mx) var(--my), black 0%, rgba(0,0,0,0.5) 40%, transparent 75%)",
-        }}
-      />
+      {/* Dotted world map + cursor spotlight (replaces the old continuous grid) */}
+      <WorldMapBackground />
 
 
 
