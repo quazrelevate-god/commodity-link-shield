@@ -12,4 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Force-enable the Nitro deploy plugin (the Lovable wrapper skips it outside Lovable's
+  // own cloud) and target Vercel so it emits a serverless SSR function in .vercel/output.
+  nitro: { preset: "vercel" },
 });
