@@ -1,8 +1,5 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "dist",
-  "env": {
-    "NITRO_PRESET": "node_cluster"
-  }
+  "outputDirectory": ".output/public"
 }
